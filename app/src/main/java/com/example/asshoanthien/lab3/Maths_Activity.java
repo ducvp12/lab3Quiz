@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Maths_Activity extends AppCompatActivity {
-
+    public int m=0;
     Adapter adapterSport;
     ArrayList<Sport> modelSports;
     private ListView mLv;
@@ -83,26 +83,27 @@ public class Maths_Activity extends AppCompatActivity {
             super.onPostExecute(s);
 
             Log.e("data", s);
-            try {
-                JSONObject root = new JSONObject(s);
+            try { JSONObject root = new JSONObject(s);
                 JSONObject quiz = root.getJSONObject("quiz");
-                final JSONObject maths = quiz.getJSONObject("maths");
-                JSONObject q1 = maths.getJSONObject("q1");
-                String qs = q1.getString("question");
-                final String answer = q1.getString("answer");
-                Log.e("Qs", qs);
-                mTvCauHoi.setText(qs);
+                final JSONArray maths = quiz.getJSONArray("maths");
+                for (int i=0;i<maths.length();i++) {
 
-                JSONArray jsonArrayOption = q1.getJSONArray("options");
-                for (int i = 0; i < jsonArrayOption.length(); i++) {
-                    String as = jsonArrayOption.getString(i);
-                    modelSports.add(new Sport(as));
+                    final JSONObject q1 = maths.getJSONObject(i);
+                    final String qs = q1.getString("question");
+                    final String answer = q1.getString("answer");
 
-                }
-                adapterSport.notifyDataSetChanged();
+                    JSONArray jsonArrayOption = q1.getJSONArray("options");
+                    for (m = 0; m < jsonArrayOption.length(); m++) {
+                        String as = jsonArrayOption.getString(m);
+                        modelSports.add(new Sport(as));
+
+                    }
+                    mTvCauHoi.setText(qs);
+                    adapterSport.notifyDataSetChanged();
 
 
-                mLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                    mLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
@@ -111,25 +112,17 @@ public class Maths_Activity extends AppCompatActivity {
 
                         modelSports.clear();
                         adapterSport.notifyDataSetChanged();
-
-                               if (selected.equals(answer)) {
-                                    a=a+1;
-
-                                   try {
-
-
-                                       JSONObject q2 = maths.getJSONObject("q2");
-                                       String qs = q2.getString("question");
-                                       final String answer = q2.getString("answer");
-                                       Log.e("Qs", qs);
-                                       mTvCauHoi.setText(qs);
-                                       JSONArray jsonArrayOption = q2.getJSONArray("options");
-                                       for (int j = 0; j < jsonArrayOption.length(); j++) {
-                                           String as = jsonArrayOption.getString(j);
-                                           modelSports.add(new Sport(as));
-
-                                       }
-                                       adapterSport.notifyDataSetChanged();
+                        if (selected.equals(answer)) {
+                            a = a +1;
+                            JSONArray jsonArrayOption = null;
+                            try {
+                                jsonArrayOption = q1.getJSONArray("options");
+                                for ( m = 0; m < jsonArrayOption.length(); m++) {
+                                    String as = jsonArrayOption.getString(m);
+                                    modelSports.add(new Sport(as));
+                                    mTvCauHoi.setText(qs);
+                                }
+                                adapterSport.notifyDataSetChanged();
                                        mLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                            @Override
                                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -158,7 +151,7 @@ public class Maths_Activity extends AppCompatActivity {
                                    try {
 
 
-                                       JSONObject q2 = maths.getJSONObject("q2");
+                                       JSONObject q2 = maths.getJSONObject(i);
                                        String qs = q2.getString("question");
                                        final String answer = q2.getString("answer");
                                        Log.e("Qs", qs);
@@ -197,12 +190,12 @@ public class Maths_Activity extends AppCompatActivity {
                                }
                            }
 
-                });
+                });}
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }
-    }
+        }}
     @Override
     protected void onPause() {
 

@@ -89,48 +89,70 @@ public class Sport_Activity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String s) {
+        protected void onPostExecute(final String s) {
             super.onPostExecute(s);
 
             Log.e("data", s);
             try {
                 JSONObject root = new JSONObject(s);
                 JSONObject quiz = root.getJSONObject("quiz");
-                JSONObject sport = quiz.getJSONObject("sport");
-                JSONObject q1 = sport.getJSONObject("q1");
-                String qs = q1.getString("question");
-                final String answer = q1.getString("answer");
-                Log.e("Qs", qs);
-                mTvCauHoi.setText(qs);
+                JSONArray sport = quiz.getJSONArray("sport");
+                for (int i=0;i<sport.length()-1;i++){
+                    final JSONObject q1 = sport.getJSONObject(i);
+                    final String qs = q1.getString("question");
+                    final String answer = q1.getString("answer");
 
-                JSONArray jsonArrayOption = q1.getJSONArray("options");
-                for ( m = 0; m < jsonArrayOption.length(); m++) {
-                    String as = jsonArrayOption.getString(m);
-                    modelSports.add(new Sport(as));
-
-                }
-                adapterSport.notifyDataSetChanged();
-
-
-                mLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                        String selected =((TextView)view.findViewById(R.id.tv_as21)).getText().toString();
-                        int a =0;
-                        if (selected.equals(answer)) {
-                            a = a +1;
-                        }
-
-                        Log.e("mark" ,"" + a);
-                        Intent intent = new Intent(Sport_Activity.this, Result_Activity.class);
-                        intent.putExtra("mark",a);
-                        intent.putExtra("bien",m);
-
-                        startActivity(intent);
-
+                    JSONArray jsonArrayOption = q1.getJSONArray("options");
+                    for ( m = 0; m < jsonArrayOption.length(); m++) {
+                        String as = jsonArrayOption.getString(m);
+                        modelSports.add(new Sport(as));
+                        mTvCauHoi.setText(qs);
                     }
-                });
+                    adapterSport.notifyDataSetChanged();
+
+
+                    mLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                            String selected =((TextView)view.findViewById(R.id.tv_as21)).getText().toString();
+                            int a =0;
+
+                            modelSports.clear();
+                            adapterSport.notifyDataSetChanged();
+                            if (selected.equals(answer)) {
+                                a = a +1;
+                                JSONArray jsonArrayOption = null;
+                                try {
+                                    jsonArrayOption = q1.getJSONArray("options");
+                                    for ( m = 0; m < jsonArrayOption.length(); m++) {
+                                        String as = jsonArrayOption.getString(m);
+                                        modelSports.add(new Sport(as));
+                                        mTvCauHoi.setText(qs);
+                                    }
+                                    adapterSport.notifyDataSetChanged();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+
+                            }
+
+                            Log.e("mark" ,"" + a);
+//                            Intent intent = new Intent(Sport_Activity.this, Result_Activity.class);
+//                            intent.putExtra("mark",a);
+//                            intent.putExtra("bien",m);
+
+//                            startActivity(intent);
+
+                        }
+                    });
+                }
+
+
+
+
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
