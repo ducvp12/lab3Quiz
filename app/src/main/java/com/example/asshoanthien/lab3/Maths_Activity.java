@@ -25,6 +25,7 @@ import java.util.Scanner;
 
 public class Maths_Activity extends AppCompatActivity {
     public int m=0;
+    public int a=0;
     Adapter adapterSport;
     ArrayList<Sport> modelSports;
     private ListView mLv;
@@ -86,9 +87,13 @@ public class Maths_Activity extends AppCompatActivity {
             try { JSONObject root = new JSONObject(s);
                 JSONObject quiz = root.getJSONObject("quiz");
                 final JSONArray maths = quiz.getJSONArray("maths");
-                for (int i=0;i<maths.length();i++) {
+                for(int j=0; j<1;j++){
 
-                    final JSONObject q1 = maths.getJSONObject(i);
+                }
+                for (int i=1;i<maths.length();i++) {
+
+                    final JSONObject q1 = maths.getJSONObject(i-1);
+                    final JSONObject q2 = maths.getJSONObject(i);
                     final String qs = q1.getString("question");
                     final String answer = q1.getString("answer");
 
@@ -108,7 +113,7 @@ public class Maths_Activity extends AppCompatActivity {
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                         String selected =((TextView)view.findViewById(R.id.tv_as21)).getText().toString();
-                        int a =0;
+
 
                         modelSports.clear();
                         adapterSport.notifyDataSetChanged();
@@ -116,11 +121,13 @@ public class Maths_Activity extends AppCompatActivity {
                             a = a +1;
                             JSONArray jsonArrayOption = null;
                             try {
-                                jsonArrayOption = q1.getJSONArray("options");
+
+                                jsonArrayOption = q2.getJSONArray("options");
+                                final String answer1 = q2.getString("answer");
                                 for ( m = 0; m < jsonArrayOption.length(); m++) {
                                     String as = jsonArrayOption.getString(m);
                                     modelSports.add(new Sport(as));
-                                    mTvCauHoi.setText(qs);
+                                    mTvCauHoi.setText("12 - 8 = ?");
                                 }
                                 adapterSport.notifyDataSetChanged();
                                        mLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -128,16 +135,26 @@ public class Maths_Activity extends AppCompatActivity {
                                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                                                String selected =((TextView)view.findViewById(R.id.tv_as21)).getText().toString();
-                                               int a=1;
-                                               if (selected.equals(answer)) {
+
+                                               if (selected.equals(answer1)) {
                                                    a = a +1;
+                                                   Intent intent = new Intent(Maths_Activity.this, Result_Activity.class);
+                                                   intent.putExtra("mark",a);
+                                                   intent.putExtra("bien",i);
+                                                   startActivity(intent);
+                                               } else {
+
+                                                   Intent intent = new Intent(Maths_Activity.this, Result_Activity.class);
+                                                   intent.putExtra("mark",a);
+                                                   intent.putExtra("bien",i);
+                                                   startActivity(intent);
                                                }
 
-                                               Log.e("mark" ,"" + a);
-                                               Intent intent = new Intent(Maths_Activity.this, Result_Activity.class);
-                                               intent.putExtra("mark",a);
-                                               intent.putExtra("bien",i);
-                                               startActivity(intent);
+//                                               Log.e("mark" ,"" + a);
+//                                               Intent intent = new Intent(Maths_Activity.this, Result_Activity.class);
+//                                               intent.putExtra("mark",a);
+//                                               intent.putExtra("bien",i);
+//                                               startActivity(intent);
 
                                            }
                                        });
@@ -146,7 +163,7 @@ public class Maths_Activity extends AppCompatActivity {
                                        e.printStackTrace();
                                    }
                                } else {
-                                   a=a+0;
+
 
                                    try {
 
@@ -168,7 +185,7 @@ public class Maths_Activity extends AppCompatActivity {
                                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                                                String selected =((TextView)view.findViewById(R.id.tv_as21)).getText().toString();
-                                               int a=0;
+
                                                if (selected.equals(answer)) {
                                                    a = a +1;
                                                }

@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Sport_Activity extends AppCompatActivity {
-
+    public int a=0;
     private Button mButton;
     private Button mButton2;
     private Button mButton3;
@@ -92,23 +92,28 @@ public class Sport_Activity extends AppCompatActivity {
         protected void onPostExecute(final String s) {
             super.onPostExecute(s);
 
-            Log.e("data", s);
-            try {
-                JSONObject root = new JSONObject(s);
+            try { JSONObject root = new JSONObject(s);
                 JSONObject quiz = root.getJSONObject("quiz");
-                JSONArray sport = quiz.getJSONArray("sport");
-                for (int i=0;i<sport.length()-1;i++){
-                    final JSONObject q1 = sport.getJSONObject(i);
+                final JSONArray maths = quiz.getJSONArray("sport");
+                for(int j=0; j<1;j++){
+
+                }
+                for (int i=1;i<maths.length();i++) {
+
+                    final JSONObject q1 = maths.getJSONObject(i-1);
+                    final JSONObject q2 = maths.getJSONObject(i);
                     final String qs = q1.getString("question");
                     final String answer = q1.getString("answer");
 
                     JSONArray jsonArrayOption = q1.getJSONArray("options");
-                    for ( m = 0; m < jsonArrayOption.length(); m++) {
+                    for (m = 0; m < jsonArrayOption.length(); m++) {
                         String as = jsonArrayOption.getString(m);
                         modelSports.add(new Sport(as));
-                        mTvCauHoi.setText(qs);
+
                     }
+                    mTvCauHoi.setText(qs);
                     adapterSport.notifyDataSetChanged();
+
 
 
                     mLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -116,7 +121,7 @@ public class Sport_Activity extends AppCompatActivity {
                         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                             String selected =((TextView)view.findViewById(R.id.tv_as21)).getText().toString();
-                            int a =0;
+
 
                             modelSports.clear();
                             adapterSport.notifyDataSetChanged();
@@ -124,38 +129,95 @@ public class Sport_Activity extends AppCompatActivity {
                                 a = a +1;
                                 JSONArray jsonArrayOption = null;
                                 try {
-                                    jsonArrayOption = q1.getJSONArray("options");
+
+                                    jsonArrayOption = q2.getJSONArray("options");
+                                    final String answer1 = q2.getString("answer");
                                     for ( m = 0; m < jsonArrayOption.length(); m++) {
                                         String as = jsonArrayOption.getString(m);
                                         modelSports.add(new Sport(as));
                                         mTvCauHoi.setText(qs);
                                     }
                                     adapterSport.notifyDataSetChanged();
+                                    mLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                                            String selected =((TextView)view.findViewById(R.id.tv_as21)).getText().toString();
+
+                                            if (selected.equals(answer1)) {
+                                                a = a +1;
+                                                Intent intent = new Intent(Sport_Activity.this, Result_Activity.class);
+                                                intent.putExtra("mark",a);
+                                                intent.putExtra("bien",i);
+                                                startActivity(intent);
+                                            } else {
+
+                                                Intent intent = new Intent(Sport_Activity.this, Result_Activity.class);
+                                                intent.putExtra("mark",a);
+                                                intent.putExtra("bien",i);
+                                                startActivity(intent);
+                                            }
+
+//                                               Log.e("mark" ,"" + a);
+//                                               Intent intent = new Intent(Maths_Activity.this, Result_Activity.class);
+//                                               intent.putExtra("mark",a);
+//                                               intent.putExtra("bien",i);
+//                                               startActivity(intent);
+
+                                        }
+                                    });
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+
+
+                                try {
+
+
+                                    JSONObject q2 = maths.getJSONObject(i);
+                                    String qs = q2.getString("question");
+                                    final String answer = q2.getString("answer");
+                                    Log.e("Qs", qs);
+                                    mTvCauHoi.setText(qs);
+                                    JSONArray jsonArrayOption = q2.getJSONArray("options");
+                                    for (int j = 0; j < jsonArrayOption.length(); j++) {
+                                        String as = jsonArrayOption.getString(j);
+                                        modelSports.add(new Sport(as));
+
+                                    }
+                                    adapterSport.notifyDataSetChanged();
+                                    mLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                                            String selected =((TextView)view.findViewById(R.id.tv_as21)).getText().toString();
+
+                                            if (selected.equals(answer)) {
+                                                a = a +1;
+                                            }
+
+                                            Log.e("mark" ,"" + a);
+                                            Intent intent = new Intent(Sport_Activity.this, Result_Activity.class);
+                                            intent.putExtra("mark",a);
+                                            intent.putExtra("bien",i);
+                                            startActivity(intent);
+
+                                        }
+                                    });
+
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
 
 
                             }
-
-                            Log.e("mark" ,"" + a);
-//                            Intent intent = new Intent(Sport_Activity.this, Result_Activity.class);
-//                            intent.putExtra("mark",a);
-//                            intent.putExtra("bien",m);
-
-//                            startActivity(intent);
-
                         }
-                    });
-                }
 
-
-
-
+                    });}
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }
-    }
-}
+        }}}
